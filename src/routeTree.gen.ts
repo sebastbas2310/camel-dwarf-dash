@@ -18,6 +18,7 @@ import { Route as TeamsIndexRouteImport } from './routes/teams.index'
 import { Route as TeamsIdRouteImport } from './routes/teams.$id'
 import { Route as RacesIdIndexRouteImport } from './routes/races.$id.index'
 import { Route as RacesIdRegistrationsRouteImport } from './routes/races.$id.registrations'
+import { Route as RacesIdResultsRouteImport } from './routes/races.$id.results'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const RacesIdRegistrationsRoute = RacesIdRegistrationsRouteImport.update({
   path: '/races/$id/registrations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RacesIdResultsRoute = RacesIdResultsRouteImport.update({
+  id: '/races/$id/results',
+  path: '/races/$id/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/races/': typeof RacesIndexRoute
   '/teams/': typeof TeamsIndexRoute
   '/races/$id/registrations': typeof RacesIdRegistrationsRoute
+  '/races/$id/results': typeof RacesIdResultsRoute
   '/races/$id/': typeof RacesIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/races': typeof RacesIndexRoute
   '/teams': typeof TeamsIndexRoute
   '/races/$id/registrations': typeof RacesIdRegistrationsRoute
+  '/races/$id/results': typeof RacesIdResultsRoute
   '/races/$id': typeof RacesIdIndexRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/races/': typeof RacesIndexRoute
   '/teams/': typeof TeamsIndexRoute
   '/races/$id/registrations': typeof RacesIdRegistrationsRoute
+  '/races/$id/results': typeof RacesIdResultsRoute
   '/races/$id/': typeof RacesIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/races/'
     | '/teams/'
     | '/races/$id/registrations'
+    | '/races/$id/results'
     | '/races/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/races'
     | '/teams'
     | '/races/$id/registrations'
+    | '/races/$id/results'
     | '/races/$id'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/races/'
     | '/teams/'
     | '/races/$id/registrations'
+    | '/races/$id/results'
     | '/races/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   RacesIndexRoute: typeof RacesIndexRoute
   TeamsIndexRoute: typeof TeamsIndexRoute
   RacesIdRegistrationsRoute: typeof RacesIdRegistrationsRoute
+  RacesIdResultsRoute: typeof RacesIdResultsRoute
   RacesIdIndexRoute: typeof RacesIdIndexRoute
 }
 
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RacesIdRegistrationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/races/$id/results': {
+      id: '/races/$id/results'
+      path: '/races/$id/results'
+      fullPath: '/races/$id/results'
+      preLoaderRoute: typeof RacesIdResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -224,18 +244,9 @@ const rootRouteChildren: RootRouteChildren = {
   RacesIndexRoute: RacesIndexRoute,
   TeamsIndexRoute: TeamsIndexRoute,
   RacesIdRegistrationsRoute: RacesIdRegistrationsRoute,
+  RacesIdResultsRoute: RacesIdResultsRoute,
   RacesIdIndexRoute: RacesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
