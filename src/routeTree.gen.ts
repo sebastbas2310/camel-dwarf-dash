@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as StandingsRouteImport } from './routes/standings'
 import { Route as CompetitorsIndexRouteImport } from './routes/competitors.index'
 import { Route as CompetitorsIdRouteImport } from './routes/competitors.$id'
 import { Route as RacesIndexRouteImport } from './routes/races.index'
@@ -28,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandingsRoute = StandingsRouteImport.update({
+  id: '/standings',
+  path: '/standings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompetitorsIndexRoute = CompetitorsIndexRouteImport.update({
@@ -74,6 +80,7 @@ const RacesIdResultsRoute = RacesIdResultsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/standings': typeof StandingsRoute
   '/competitors/$id': typeof CompetitorsIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/competitors/': typeof CompetitorsIndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/standings': typeof StandingsRoute
   '/competitors/$id': typeof CompetitorsIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/competitors': typeof CompetitorsIndexRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/standings': typeof StandingsRoute
   '/competitors/$id': typeof CompetitorsIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/competitors/': typeof CompetitorsIndexRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/standings'
     | '/competitors/$id'
     | '/teams/$id'
     | '/competitors/'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/standings'
     | '/competitors/$id'
     | '/teams/$id'
     | '/competitors'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/login'
+    | '/standings'
     | '/competitors/$id'
     | '/teams/$id'
     | '/competitors/'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  StandingsRoute: typeof StandingsRoute
   CompetitorsIdRoute: typeof CompetitorsIdRoute
   TeamsIdRoute: typeof TeamsIdRoute
   CompetitorsIndexRoute: typeof CompetitorsIndexRoute
@@ -174,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standings': {
+      id: '/standings'
+      path: '/standings'
+      fullPath: '/standings'
+      preLoaderRoute: typeof StandingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/competitors/': {
@@ -238,6 +258,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  StandingsRoute: StandingsRoute,
   CompetitorsIdRoute: CompetitorsIdRoute,
   TeamsIdRoute: TeamsIdRoute,
   CompetitorsIndexRoute: CompetitorsIndexRoute,
