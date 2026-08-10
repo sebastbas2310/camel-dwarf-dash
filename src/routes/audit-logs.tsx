@@ -43,7 +43,7 @@ function AuditLogsPage() {
       .filter((log) =>
         !q
           ? true
-          : `${log.action} ${log.entityType} ${log.performedBy} ${log.details}`
+          : `${log.action} ${log.entityType} ${log.username} ${log.description}`
               .toLowerCase()
               .includes(q),
       )
@@ -88,10 +88,10 @@ function AuditLogsPage() {
                       <TableCell className="font-medium">{log.action}</TableCell>
                       <TableCell className="hidden sm:table-cell text-muted-foreground">
                         {log.entityType}
-                        {log.entityId ? ` #${log.entityId}` : ""}
+                        
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">{log.performedBy}</TableCell>
-                      <TableCell className="text-muted-foreground">{log.details}</TableCell>
+                      <TableCell className="hidden md:table-cell">{log.username}</TableCell>
+                      <TableCell className="text-muted-foreground">{log.description}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
