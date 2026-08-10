@@ -40,10 +40,10 @@ export function AppShell({
   actions,
 }: {
   children: ReactNode;
-  allow?: Role[];
-  title?: string;
-  subtitle?: string;
-  actions?: ReactNode;
+  allow?: Role[] | undefined;
+  title?: string | undefined;
+  subtitle?: string | undefined;
+  actions?: ReactNode | undefined;
 }) {
   const { user, ready, logout, offline } = useAuth();
   const navigate = useNavigate();
