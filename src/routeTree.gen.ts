@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuditLogsRouteImport } from './routes/audit-logs'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as StandingsRouteImport } from './routes/standings'
+import { Route as CompetitorsIndexRouteImport } from './routes/competitors.index'
+import { Route as CompetitorsIdRouteImport } from './routes/competitors.$id'
+import { Route as RacesIndexRouteImport } from './routes/races.index'
+import { Route as TeamsIndexRouteImport } from './routes/teams.index'
+import { Route as TeamsIdRouteImport } from './routes/teams.$id'
+import { Route as RacesIdIndexRouteImport } from './routes/races.$id.index'
+import { Route as RacesIdRegistrationsRouteImport } from './routes/races.$id.registrations'
+import { Route as RacesIdResultsRouteImport } from './routes/races.$id.results'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuditLogsRoute = AuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandingsRoute = StandingsRouteImport.update({
+  id: '/standings',
+  path: '/standings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompetitorsIndexRoute = CompetitorsIndexRouteImport.update({
+  id: '/competitors/',
+  path: '/competitors/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompetitorsIdRoute = CompetitorsIdRouteImport.update({
+  id: '/competitors/$id',
+  path: '/competitors/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RacesIndexRoute = RacesIndexRouteImport.update({
+  id: '/races/',
+  path: '/races/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsIndexRoute = TeamsIndexRouteImport.update({
+  id: '/teams/',
+  path: '/teams/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsIdRoute = TeamsIdRouteImport.update({
+  id: '/teams/$id',
+  path: '/teams/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RacesIdIndexRoute = RacesIdIndexRouteImport.update({
+  id: '/races/$id/',
+  path: '/races/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RacesIdRegistrationsRoute = RacesIdRegistrationsRouteImport.update({
+  id: '/races/$id/registrations',
+  path: '/races/$id/registrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RacesIdResultsRoute = RacesIdResultsRouteImport.update({
+  id: '/races/$id/results',
+  path: '/races/$id/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/audit-logs': typeof AuditLogsRoute
+  '/login': typeof LoginRoute
+  '/standings': typeof StandingsRoute
+  '/competitors/$id': typeof CompetitorsIdRoute
+  '/teams/$id': typeof TeamsIdRoute
+  '/competitors/': typeof CompetitorsIndexRoute
+  '/races/': typeof RacesIndexRoute
+  '/teams/': typeof TeamsIndexRoute
+  '/races/$id/registrations': typeof RacesIdRegistrationsRoute
+  '/races/$id/results': typeof RacesIdResultsRoute
+  '/races/$id/': typeof RacesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/audit-logs': typeof AuditLogsRoute
+  '/login': typeof LoginRoute
+  '/standings': typeof StandingsRoute
+  '/competitors/$id': typeof CompetitorsIdRoute
+  '/teams/$id': typeof TeamsIdRoute
+  '/competitors': typeof CompetitorsIndexRoute
+  '/races': typeof RacesIndexRoute
+  '/teams': typeof TeamsIndexRoute
+  '/races/$id/registrations': typeof RacesIdRegistrationsRoute
+  '/races/$id/results': typeof RacesIdResultsRoute
+  '/races/$id': typeof RacesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/audit-logs': typeof AuditLogsRoute
+  '/login': typeof LoginRoute
+  '/standings': typeof StandingsRoute
+  '/competitors/$id': typeof CompetitorsIdRoute
+  '/teams/$id': typeof TeamsIdRoute
+  '/competitors/': typeof CompetitorsIndexRoute
+  '/races/': typeof RacesIndexRoute
+  '/teams/': typeof TeamsIndexRoute
+  '/races/$id/registrations': typeof RacesIdRegistrationsRoute
+  '/races/$id/results': typeof RacesIdResultsRoute
+  '/races/$id/': typeof RacesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/audit-logs'
+    | '/login'
+    | '/standings'
+    | '/competitors/$id'
+    | '/teams/$id'
+    | '/competitors/'
+    | '/races/'
+    | '/teams/'
+    | '/races/$id/registrations'
+    | '/races/$id/results'
+    | '/races/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/audit-logs'
+    | '/login'
+    | '/standings'
+    | '/competitors/$id'
+    | '/teams/$id'
+    | '/competitors'
+    | '/races'
+    | '/teams'
+    | '/races/$id/registrations'
+    | '/races/$id/results'
+    | '/races/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/audit-logs'
+    | '/login'
+    | '/standings'
+    | '/competitors/$id'
+    | '/teams/$id'
+    | '/competitors/'
+    | '/races/'
+    | '/teams/'
+    | '/races/$id/registrations'
+    | '/races/$id/results'
+    | '/races/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuditLogsRoute: typeof AuditLogsRoute
+  LoginRoute: typeof LoginRoute
+  StandingsRoute: typeof StandingsRoute
+  CompetitorsIdRoute: typeof CompetitorsIdRoute
+  TeamsIdRoute: typeof TeamsIdRoute
+  CompetitorsIndexRoute: typeof CompetitorsIndexRoute
+  RacesIndexRoute: typeof RacesIndexRoute
+  TeamsIndexRoute: typeof TeamsIndexRoute
+  RacesIdRegistrationsRoute: typeof RacesIdRegistrationsRoute
+  RacesIdResultsRoute: typeof RacesIdResultsRoute
+  RacesIdIndexRoute: typeof RacesIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +195,100 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/audit-logs': {
+      id: '/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/audit-logs'
+      preLoaderRoute: typeof AuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standings': {
+      id: '/standings'
+      path: '/standings'
+      fullPath: '/standings'
+      preLoaderRoute: typeof StandingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/competitors/': {
+      id: '/competitors/'
+      path: '/competitors'
+      fullPath: '/competitors/'
+      preLoaderRoute: typeof CompetitorsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/competitors/$id': {
+      id: '/competitors/$id'
+      path: '/competitors/$id'
+      fullPath: '/competitors/$id'
+      preLoaderRoute: typeof CompetitorsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/races/': {
+      id: '/races/'
+      path: '/races'
+      fullPath: '/races/'
+      preLoaderRoute: typeof RacesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/': {
+      id: '/teams/'
+      path: '/teams'
+      fullPath: '/teams/'
+      preLoaderRoute: typeof TeamsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/$id': {
+      id: '/teams/$id'
+      path: '/teams/$id'
+      fullPath: '/teams/$id'
+      preLoaderRoute: typeof TeamsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/races/$id/': {
+      id: '/races/$id/'
+      path: '/races/$id'
+      fullPath: '/races/$id/'
+      preLoaderRoute: typeof RacesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/races/$id/registrations': {
+      id: '/races/$id/registrations'
+      path: '/races/$id/registrations'
+      fullPath: '/races/$id/registrations'
+      preLoaderRoute: typeof RacesIdRegistrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/races/$id/results': {
+      id: '/races/$id/results'
+      path: '/races/$id/results'
+      fullPath: '/races/$id/results'
+      preLoaderRoute: typeof RacesIdResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuditLogsRoute: AuditLogsRoute,
+  LoginRoute: LoginRoute,
+  StandingsRoute: StandingsRoute,
+  CompetitorsIdRoute: CompetitorsIdRoute,
+  TeamsIdRoute: TeamsIdRoute,
+  CompetitorsIndexRoute: CompetitorsIndexRoute,
+  RacesIndexRoute: RacesIndexRoute,
+  TeamsIndexRoute: TeamsIndexRoute,
+  RacesIdRegistrationsRoute: RacesIdRegistrationsRoute,
+  RacesIdResultsRoute: RacesIdResultsRoute,
+  RacesIdIndexRoute: RacesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
