@@ -163,7 +163,7 @@ function Dashboard() {
                   </Button>
                   {canManage ? (
                     <Button asChild variant="outline" className="justify-start">
-                      <Link to="/approvals">
+                      <Link to="/races">
                         <ClipboardCheck className="size-4" /> Pending approvals ({pending.length})
                       </Link>
                     </Button>
