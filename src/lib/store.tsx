@@ -9,6 +9,8 @@ import {
   mockTeams,
 } from "./mock-data";
 import { useAuth } from "./auth";
+import { api } from "./api";
+import { fetchRemoteSnapshot } from "./remote";
 import type {
   AuditLog,
   Competitor,
@@ -29,6 +31,9 @@ interface StoreState {
 
 interface StoreValue extends StoreState {
   loading: boolean;
+  /** True when the racing server answered; false means the demo dataset is on screen. */
+  live: boolean;
+  refresh: () => Promise<void>;
   saveCompetitor: (input: Omit<Competitor, "id"> & { id?: number }) => void;
   deactivateCompetitor: (id: number) => void;
   saveTeam: (input: Omit<Team, "id" | "memberIds"> & { id?: number }) => void;
@@ -57,10 +62,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     auditLogs: mockAuditLogs,
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 350);
-    return () => clearTimeout(timer);
+  const [live, setLive] = useState(false);
+
+  const refresh = useCallback(async () => {
+    const snapshot = await fetchRemoteSnapshot();
+    setLive(snapshot.reachable);
+    setState((prev) => ({
+      ...prev,
+      competitors: snapshot.competitors.length ? snapshot.competitors : prev.competitors,
+      teams: snapshot.teams.length ? snapshot.teams : prev.teams,
+      races: snapshot.races.length ? snapshot.races : prev.races,
+      registrations: snapshot.registrations.length ? snapshot.registrations : prev.registrations,
+      results: snapshot.results.length ? snapshot.results : prev.results,
+    }));
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void refresh().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [refresh]);
+
 
   const log = useCallback(
     (entry: Omit<AuditLog, "id" | "timestamp" | "username">) =>
@@ -80,10 +106,29 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<StoreValue>(() => {
+    /** Best-effort write-through to the racing server; the local update always stands. */
+    const persist = (action: () => Promise<unknown>) => {
+      if (!live) return;
+      void action()
+        .then(() => refresh())
+        .catch(() => undefined);
+    };
+
     return {
       ...state,
       loading,
+      live,
+      refresh,
       saveCompetitor: (input) => {
+        persist(() =>
+          input.id
+            ? api.users.update(input.id, { fullName: input.name, role: "VIEWER" })
+            : api.users.create({
+                fullName: input.name,
+                email: `${input.name.toLowerCase().replace(/[^a-z0-9]+/g, ".")}@eia.race`,
+                role: "VIEWER",
+              }),
+        );
         setState((prev) => {
           if (input.id) {
             return {
@@ -122,6 +167,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
       },
       saveTeam: (input) => {
+        persist(() => {
+          const body = { name: input.name, description: input.strategy, coach: input.coach };
+          return input.id ? api.teams.update(input.id, body) : api.teams.create(body);
+        });
         setState((prev) => {
           if (input.id) {
             return {
