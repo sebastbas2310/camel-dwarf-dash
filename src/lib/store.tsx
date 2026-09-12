@@ -106,10 +106,29 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<StoreValue>(() => {
+    /** Best-effort write-through to the racing server; the local update always stands. */
+    const persist = (action: () => Promise<unknown>) => {
+      if (!live) return;
+      void action()
+        .then(() => refresh())
+        .catch(() => undefined);
+    };
+
     return {
       ...state,
       loading,
+      live,
+      refresh,
       saveCompetitor: (input) => {
+        persist(() =>
+          input.id
+            ? api.users.update(input.id, { fullName: input.name, role: "VIEWER" })
+            : api.users.create({
+                fullName: input.name,
+                email: `${input.name.toLowerCase().replace(/[^a-z0-9]+/g, ".")}@eia.race`,
+                role: "VIEWER",
+              }),
+        );
         setState((prev) => {
           if (input.id) {
             return {
