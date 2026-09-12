@@ -57,10 +57,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     auditLogs: mockAuditLogs,
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 350);
-    return () => clearTimeout(timer);
+  const [live, setLive] = useState(false);
+
+  const refresh = useCallback(async () => {
+    const snapshot = await fetchRemoteSnapshot();
+    setLive(snapshot.reachable);
+    setState((prev) => ({
+      ...prev,
+      competitors: snapshot.competitors.length ? snapshot.competitors : prev.competitors,
+      teams: snapshot.teams.length ? snapshot.teams : prev.teams,
+      races: snapshot.races.length ? snapshot.races : prev.races,
+      registrations: snapshot.registrations.length ? snapshot.registrations : prev.registrations,
+      results: snapshot.results.length ? snapshot.results : prev.results,
+    }));
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void refresh().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [refresh]);
+
 
   const log = useCallback(
     (entry: Omit<AuditLog, "id" | "timestamp" | "username">) =>
