@@ -9,6 +9,8 @@ import {
   mockTeams,
 } from "./mock-data";
 import { useAuth } from "./auth";
+import { api } from "./api";
+import { fetchRemoteSnapshot } from "./remote";
 import type {
   AuditLog,
   Competitor,
