@@ -31,6 +31,9 @@ interface StoreState {
 
 interface StoreValue extends StoreState {
   loading: boolean;
+  /** True when the racing server answered; false means the demo dataset is on screen. */
+  live: boolean;
+  refresh: () => Promise<void>;
   saveCompetitor: (input: Omit<Competitor, "id"> & { id?: number }) => void;
   deactivateCompetitor: (id: number) => void;
   saveTeam: (input: Omit<Team, "id" | "memberIds"> & { id?: number }) => void;
