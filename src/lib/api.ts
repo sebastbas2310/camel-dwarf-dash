@@ -108,46 +108,52 @@ export async function apiRequest<T>(
   return (text ? JSON.parse(text) : undefined) as T;
 }
 
-/** Thin, typed service layer mirroring the Spring Boot endpoints. */
+/** Spring pages come back as `{ content, page, size, ... }`. */
+export function unwrapPage<T>(payload: unknown): T[] {
+  if (Array.isArray(payload)) return payload as T[];
+  if (payload && typeof payload === "object" && Array.isArray((payload as { content?: unknown }).content)) {
+    return (payload as { content: T[] }).content;
+  }
+  return [];
+}
+
+const PAGE_QUERY = "?page=0&size=200";
+
+/** Thin, typed service layer mirroring the Spring Boot endpoints (`/api/v1`). */
 export const api = {
+  /** The backend exposes no auth endpoint yet, so this always fails over to demo mode. */
   login: (username: string, password: string) =>
     apiRequest<{ token: string; username: string; role: Role; displayName?: string }>(
       "/auth/login",
       { method: "POST", body: { username, password } },
     ),
-  competitors: {
-    list: () => apiRequest("/competitors"),
-    get: (id: number) => apiRequest(`/competitors/${id}`),
-    create: (body: unknown) => apiRequest("/competitors", { method: "POST", body }),
-    update: (id: number, body: unknown) =>
-      apiRequest(`/competitors/${id}`, { method: "PUT", body }),
-    deactivate: (id: number) => apiRequest(`/competitors/${id}`, { method: "DELETE" }),
+  users: {
+    list: () => apiRequest(`/users${PAGE_QUERY}`),
+    get: (id: number) => apiRequest(`/users/${id}`),
+    create: (body: unknown) => apiRequest("/users", { method: "POST", body }),
+    update: (id: number, body: unknown) => apiRequest(`/users/${id}`, { method: "PUT", body }),
   },
   teams: {
-    list: () => apiRequest("/teams"),
+    list: () => apiRequest(`/teams${PAGE_QUERY}`),
+    get: (id: number) => apiRequest(`/teams/${id}`),
     create: (body: unknown) => apiRequest("/teams", { method: "POST", body }),
     update: (id: number, body: unknown) => apiRequest(`/teams/${id}`, { method: "PUT", body }),
-    addMember: (teamId: number, competitorId: number) =>
-      apiRequest(`/teams/${teamId}/members/${competitorId}`, { method: "POST" }),
-    removeMember: (teamId: number, competitorId: number) =>
-      apiRequest(`/teams/${teamId}/members/${competitorId}`, { method: "DELETE" }),
   },
   races: {
-    list: () => apiRequest("/races"),
+    list: () => apiRequest(`/races${PAGE_QUERY}`),
+    get: (id: number) => apiRequest(`/races/${id}`),
     create: (body: unknown) => apiRequest("/races", { method: "POST", body }),
     update: (id: number, body: unknown) => apiRequest(`/races/${id}`, { method: "PUT", body }),
-    registrations: (raceId: number) => apiRequest(`/races/${raceId}/registrations`),
-    approve: (raceId: number, registrationId: number) =>
-      apiRequest(`/races/${raceId}/registrations/${registrationId}/approve`, { method: "POST" }),
-    reject: (raceId: number, registrationId: number, validationNotes: string) =>
-      apiRequest(`/races/${raceId}/registrations/${registrationId}/reject`, {
-        method: "POST",
-        body: { validationNotes },
-      }),
-    results: (raceId: number) => apiRequest(`/races/${raceId}/results`),
-    saveResults: (raceId: number, body: unknown) =>
-      apiRequest(`/races/${raceId}/results`, { method: "POST", body }),
   },
-  standings: () => apiRequest("/standings"),
-  auditLogs: () => apiRequest("/audit-logs"),
+  registrations: {
+    list: () => apiRequest(`/registrations${PAGE_QUERY}`),
+    create: (body: unknown) => apiRequest("/registrations", { method: "POST", body }),
+    update: (id: number, body: unknown) =>
+      apiRequest(`/registrations/${id}`, { method: "PUT", body }),
+  },
+  results: {
+    list: () => apiRequest(`/results${PAGE_QUERY}`),
+    create: (body: unknown) => apiRequest("/results", { method: "POST", body }),
+    update: (id: number, body: unknown) => apiRequest(`/results/${id}`, { method: "PUT", body }),
+  },
 };
