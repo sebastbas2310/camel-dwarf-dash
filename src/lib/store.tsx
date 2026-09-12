@@ -167,6 +167,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
       },
       saveTeam: (input) => {
+        persist(() => {
+          const body = { name: input.name, description: input.strategy, coach: input.coach };
+          return input.id ? api.teams.update(input.id, body) : api.teams.create(body);
+        });
         setState((prev) => {
           if (input.id) {
             return {
