@@ -63,7 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setOffline(false);
       return nextUser;
     } catch (error) {
-      const unreachable = error instanceof ApiError && error.status === 0;
+      const unreachable =
+        error instanceof ApiError && (error.status === 0 || error.status === 404 || error.status >= 500);
       const demo = DEMO_ACCOUNTS[identifier];
       if (unreachable && demo && password.length > 0) {
         setToken(`demo.${identifier}.token`);
