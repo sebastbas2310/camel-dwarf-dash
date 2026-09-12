@@ -1,6 +1,6 @@
 import type { Role } from "./types";
 
-export const API_BASE_URL = "https://camelvsdwarf.onrender.com/api";
+export const API_BASE_URL = "https://camelvsdwarf.onrender.com/api/v1";
 
 const TOKEN_KEY = "eia.token";
 const USER_KEY = "eia.user";
