@@ -113,6 +113,14 @@ function LoginPage() {
               </Button>
             </form>
 
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              New to the race office?{" "}
+              <Link to="/register" className="font-semibold text-accent hover:underline">
+                Create an account
+              </Link>
+            </p>
+
+
             <div className="mt-6 rounded-lg border border-dashed border-border p-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Demo accounts (used while the API is offline)
