@@ -127,7 +127,7 @@ export const api = {
   login: (username: string, password: string) =>
     apiRequest<{ token: string; username: string; role: Role; displayName?: string }>(
       "/auth/login",
-      { method: "POST", body: { username, password } },
+      { method: "POST", body: { username, password }, timeoutMs: 8000 },
     ),
   users: {
     list: () => apiRequest(`/users${PAGE_QUERY}`),
