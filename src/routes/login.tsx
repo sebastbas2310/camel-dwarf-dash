@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -112,6 +112,14 @@ function LoginPage() {
                 {submitting ? "Signing in…" : "Sign in"}
               </Button>
             </form>
+
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              New to the race office?{" "}
+              <Link to="/register" className="font-semibold text-accent hover:underline">
+                Create an account
+              </Link>
+            </p>
+
 
             <div className="mt-6 rounded-lg border border-dashed border-border p-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
