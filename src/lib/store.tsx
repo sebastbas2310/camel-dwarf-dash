@@ -320,7 +320,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
       },
     };
-  }, [state, loading, log]);
+  }, [state, loading, log, live, refresh]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
