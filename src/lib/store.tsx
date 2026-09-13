@@ -225,6 +225,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
       },
       saveRace: (input) => {
+        persist(() => {
+          const body = {
+            name: input.name,
+            description: input.description,
+            type: input.type,
+            status: input.status,
+            distanceMeters: input.distanceMeters,
+            startLocation: input.startLocation,
+            finishLocation: input.finishLocation,
+            scheduledAt: input.scheduledAt,
+            registrationDeadline: input.registrationDeadline,
+            maximumParticipants: input.maxParticipants,
+          };
+          return input.id ? api.races.update(input.id, body) : api.races.create(body);
+        });
         setState((prev) => {
           if (input.id) {
             return {
@@ -305,7 +320,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
       },
     };
-  }, [state, loading, log]);
+  }, [state, loading, log, live, refresh]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

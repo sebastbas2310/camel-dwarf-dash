@@ -78,14 +78,16 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler | null) {
  */
 export async function apiRequest<T>(
   path: string,
-  options: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+  options: { method?: string; body?: unknown; signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<T> {
   const token = getToken();
   let response: Response;
+  // The hosted server sleeps between visits, so give up quickly and fall back to demo data.
+  const timeout = AbortSignal.timeout(options.timeoutMs ?? 12000);
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       method: options.method ?? "GET",
-      signal: options.signal ?? null,
+      signal: options.signal ?? timeout,
       headers: {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -125,7 +127,7 @@ export const api = {
   login: (username: string, password: string) =>
     apiRequest<{ token: string; username: string; role: Role; displayName?: string }>(
       "/auth/login",
-      { method: "POST", body: { username, password } },
+      { method: "POST", body: { username, password }, timeoutMs: 8000 },
     ),
   users: {
     list: () => apiRequest(`/users${PAGE_QUERY}`),
