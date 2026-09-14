@@ -31,8 +31,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { login, user, ready } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -41,13 +41,13 @@ function LoginPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!username.trim() || !password) {
-      toast.error("Enter both your username and password.");
+    if (!email.trim() || !password) {
+      toast.error("Enter your email and password.");
       return;
     }
     setSubmitting(true);
     try {
-      const signedIn = await login(username, password);
+      const signedIn = await login(email, password);
       toast.success(`Welcome back, ${signedIn.displayName}`);
       navigate({ to: "/", replace: true });
     } catch (error) {
