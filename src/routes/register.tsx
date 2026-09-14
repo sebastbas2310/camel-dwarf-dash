@@ -61,6 +61,7 @@ type FieldErrors = Partial<Record<"fullName" | "email" | "password" | "confirm",
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,30 +85,20 @@ function RegisterPage() {
     setErrors({});
     setSubmitting(true);
     try {
-      await api.users.create({
-        fullName: parsed.data.fullName,
-        email: parsed.data.email,
-        password: parsed.data.password,
-        role: parsed.data.role,
-      });
-      toast.success("Account created — you can sign in now.");
-      navigate({ to: "/login", replace: true });
-    } catch (error) {
-      const unreachable =
-        error instanceof ApiError &&
-        (error.status === 0 || error.status === 404 || error.status >= 500);
-      if (unreachable) {
-        toast.success("The racing server is offline — use a demo account to explore for now.");
+      const result = await signUp(parsed.data.email, parsed.data.password, parsed.data.fullName);
+      if (result.needsEmailConfirmation) {
+        toast.success("Check your inbox and confirm your email, then sign in.");
         navigate({ to: "/login", replace: true });
         return;
       }
-      if (error instanceof ApiError && error.status === 409) {
+      toast.success("Account created — welcome to the paddock.");
+      navigate({ to: "/", replace: true });
+    } catch (error) {
+      const message = friendlyMessage(error);
+      if (/registered|exists|already/i.test(message)) {
         setErrors({ email: "That email is already registered." });
-        toast.error("That email is already registered.");
-        return;
       }
-      setErrors({ email: "The racing server rejected these details. Please review them." });
-      toast.error("We couldn't create your account. Please review your details.");
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
