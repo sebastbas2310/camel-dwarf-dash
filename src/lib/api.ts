@@ -58,7 +58,7 @@ export async function apiRequest<T>(
     body?: unknown;
     signal?: AbortSignal;
     timeoutMs?: number;
-    token?: string | null;
+    token?: string | null | undefined;
   } = {},
 ): Promise<T> {
   const token = options.token ?? (await getAccessToken());
