@@ -87,13 +87,14 @@ function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username or email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="username"
-                  autoComplete="username"
-                  value={username}
-                  maxLength={80}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  maxLength={255}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -120,28 +121,6 @@ function LoginPage() {
               </Link>
             </p>
 
-
-            <div className="mt-6 rounded-lg border border-dashed border-border p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Demo accounts (used while the API is offline)
-              </p>
-              <div className="mt-2 grid gap-2">
-                {Object.values(DEMO_ACCOUNTS).map((account) => (
-                  <button
-                    key={account.username}
-                    type="button"
-                    onClick={() => {
-                      setUsername(account.username);
-                      setPassword("password");
-                    }}
-                    className="flex items-center justify-between rounded-md bg-muted px-3 py-2 text-left text-xs transition-colors hover:bg-accent/30"
-                  >
-                    <span className="font-semibold">{account.username}</span>
-                    <span className="text-muted-foreground">{account.role}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
