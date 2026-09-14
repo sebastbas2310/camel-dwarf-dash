@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ApiError, api } from "@/lib/api";
+import { friendlyMessage } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import type { Role } from "@/lib/types";
 
 export const Route = createFileRoute("/register")({
