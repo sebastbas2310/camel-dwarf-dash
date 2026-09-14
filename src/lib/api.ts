@@ -1,9 +1,9 @@
-import type { Role } from "./types";
+import { getAccessToken, supabase } from "./supabase";
 
-export const API_BASE_URL = "https://camelvsdwarf.onrender.com/api/v1";
+export const API_ORIGIN =
+  (import.meta.env['VITE_API_BASE_URL'] as string | undefined) ?? "https://camelvsdwarf.onrender.com";
 
-const TOKEN_KEY = "eia.token";
-const USER_KEY = "eia.user";
+export const API_BASE_URL = `${API_ORIGIN.replace(/\/$/, "")}/api/v1`;
 
 export class ApiError extends Error {
   status: number;
@@ -28,41 +28,16 @@ export function friendlyMessage(error: unknown): string {
         return "We couldn't find what you were looking for.";
       case 409:
         return "That conflicts with existing data — try a different value.";
+      case 429:
+        return "Too many attempts right now. Please wait a moment and try again.";
       case 0:
-        return "The racing server is offline. Showing demo data instead.";
+        return "The racing server is unreachable. Please try again in a moment.";
       default:
         return "Something went wrong on the racing server. Please try again.";
     }
   }
+  if (error instanceof Error && error.message) return error.message;
   return "Something unexpected happened. Please try again.";
-}
-
-export function getToken() {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(TOKEN_KEY);
-}
-
-export function setToken(token: string | null) {
-  if (typeof window === "undefined") return;
-  if (token) window.localStorage.setItem(TOKEN_KEY, token);
-  else window.localStorage.removeItem(TOKEN_KEY);
-}
-
-export function readStoredUser() {
-  if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as { username: string; displayName: string; role: Role };
-  } catch {
-    return null;
-  }
-}
-
-export function writeStoredUser(user: unknown | null) {
-  if (typeof window === "undefined") return;
-  if (user) window.localStorage.setItem(USER_KEY, JSON.stringify(user));
-  else window.localStorage.removeItem(USER_KEY);
 }
 
 type UnauthorizedHandler = () => void;
@@ -72,18 +47,24 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler | null) {
 }
 
 /**
- * Centralized request helper. Attaches `Authorization: Bearer <token>` to every
- * call and normalizes failures into `ApiError`. Network failures use status 0 so
- * callers can fall back to local demo data.
+ * Centralized request helper. Attaches the Supabase access token as
+ * `Authorization: Bearer <token>` and normalizes failures into `ApiError`.
+ * Network failures use status 0 so callers can fall back to local demo data.
  */
 export async function apiRequest<T>(
   path: string,
-  options: { method?: string; body?: unknown; signal?: AbortSignal; timeoutMs?: number } = {},
+  options: {
+    method?: string;
+    body?: unknown;
+    signal?: AbortSignal;
+    timeoutMs?: number;
+    token?: string | null;
+  } = {},
 ): Promise<T> {
-  const token = getToken();
+  const token = options.token ?? (await getAccessToken());
   let response: Response;
-  // The hosted server sleeps between visits, so give up quickly and fall back to demo data.
-  const timeout = AbortSignal.timeout(options.timeoutMs ?? 12000);
+  // The hosted server sleeps between visits, so give up quickly instead of hanging.
+  const timeout = AbortSignal.timeout(options.timeoutMs ?? 20000);
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       method: options.method ?? "GET",
@@ -99,11 +80,19 @@ export async function apiRequest<T>(
   }
 
   if (response.status === 401) {
+    await supabase.auth.signOut().catch(() => undefined);
     onUnauthorized?.();
     throw new ApiError(401, "Unauthorized");
   }
   if (!response.ok) {
-    throw new ApiError(response.status, `Request failed with ${response.status}`);
+    let message = `Request failed with ${response.status}`;
+    try {
+      const payload = (await response.json()) as { message?: string };
+      if (payload?.message) message = payload.message;
+    } catch {
+      /* keep the default message */
+    }
+    throw new ApiError(response.status, message);
   }
   if (response.status === 204) return undefined as T;
   const text = await response.text();
@@ -121,14 +110,21 @@ export function unwrapPage<T>(payload: unknown): T[] {
 
 const PAGE_QUERY = "?page=0&size=200";
 
+export interface ProfileResponse {
+  id?: number;
+  fullName?: string;
+  email?: string;
+  role?: string;
+  enabled?: boolean;
+}
+
 /** Thin, typed service layer mirroring the Spring Boot endpoints (`/api/v1`). */
 export const api = {
-  /** The backend exposes no auth endpoint yet, so this always fails over to demo mode. */
-  login: (username: string, password: string) =>
-    apiRequest<{ token: string; username: string; role: Role; displayName?: string }>(
-      "/auth/login",
-      { method: "POST", body: { username, password }, timeoutMs: 8000 },
-    ),
+  /** Creates (or returns) the app profile linked to the Supabase identity. */
+  createProfile: (fullName: string, token?: string | null) =>
+    apiRequest<ProfileResponse>("/users/me", { method: "POST", body: { fullName }, token }),
+  /** Reads the app profile for the signed-in Supabase identity. */
+  myProfile: (token?: string | null) => apiRequest<ProfileResponse>("/users/me", { token }),
   users: {
     list: () => apiRequest(`/users${PAGE_QUERY}`),
     get: (id: number) => apiRequest(`/users/${id}`),
@@ -152,6 +148,8 @@ export const api = {
     create: (body: unknown) => apiRequest("/registrations", { method: "POST", body }),
     update: (id: number, body: unknown) =>
       apiRequest(`/registrations/${id}`, { method: "PUT", body }),
+    decision: (id: number, body: unknown) =>
+      apiRequest(`/registrations/${id}/decision`, { method: "PATCH", body }),
   },
   results: {
     list: () => apiRequest(`/results${PAGE_QUERY}`),
