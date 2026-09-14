@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DEMO_ACCOUNTS, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { friendlyMessage } from "@/lib/api";
 
 export const Route = createFileRoute("/login")({
@@ -31,8 +31,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { login, user, ready } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -41,13 +41,13 @@ function LoginPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!username.trim() || !password) {
-      toast.error("Enter both your username and password.");
+    if (!email.trim() || !password) {
+      toast.error("Enter your email and password.");
       return;
     }
     setSubmitting(true);
     try {
-      const signedIn = await login(username, password);
+      const signedIn = await login(email, password);
       toast.success(`Welcome back, ${signedIn.displayName}`);
       navigate({ to: "/", replace: true });
     } catch (error) {
@@ -87,13 +87,14 @@ function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username or email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="username"
-                  autoComplete="username"
-                  value={username}
-                  maxLength={80}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  maxLength={255}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -120,28 +121,6 @@ function LoginPage() {
               </Link>
             </p>
 
-
-            <div className="mt-6 rounded-lg border border-dashed border-border p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Demo accounts (used while the API is offline)
-              </p>
-              <div className="mt-2 grid gap-2">
-                {Object.values(DEMO_ACCOUNTS).map((account) => (
-                  <button
-                    key={account.username}
-                    type="button"
-                    onClick={() => {
-                      setUsername(account.username);
-                      setPassword("password");
-                    }}
-                    className="flex items-center justify-between rounded-md bg-muted px-3 py-2 text-left text-xs transition-colors hover:bg-accent/30"
-                  >
-                    <span className="font-semibold">{account.username}</span>
-                    <span className="text-muted-foreground">{account.role}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
