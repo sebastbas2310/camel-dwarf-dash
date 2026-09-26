@@ -28,8 +28,9 @@ const NAV: { to: string; label: string; icon: typeof Flag; roles: Role[] }[] = [
   { to: "/competitors", label: "Competitors", icon: Users, roles: ["ADMINISTRATOR", "RACE_ORGANIZER", "VIEWER"] },
   { to: "/teams", label: "Teams", icon: UsersRound, roles: ["ADMINISTRATOR", "RACE_ORGANIZER", "VIEWER"] },
   { to: "/standings", label: "Standings", icon: Trophy, roles: ["ADMINISTRATOR", "RACE_ORGANIZER", "VIEWER"] },
-  { to: "/approvals", label: "Approvals", icon: ClipboardCheck, roles: ["ADMINISTRATOR", "RACE_ORGANIZER"] },
+  { to: "/users", label: "Users", icon: UserCog, roles: ["ADMINISTRATOR", "RACE_ORGANIZER"] },
   { to: "/audit-logs", label: "Audit logs", icon: ScrollText, roles: ["ADMINISTRATOR"] },
+
 ];
 
 export function AppShell({
@@ -114,13 +115,6 @@ export function AppShell({
             );
           })}
         </nav>
-        <div className="p-4">
-          {offline ? (
-            <p className="rounded-lg bg-sidebar-accent p-3 text-xs text-sidebar-foreground/70">
-              Demo mode — the API at localhost:8080 isn't responding, so sample data is shown.
-            </p>
-          ) : null}
-        </div>
       </aside>
 
       {open ? (

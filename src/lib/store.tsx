@@ -47,12 +47,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [state, setState] = useState<StoreState>({
-    competitors: mockCompetitors,
-    teams: mockTeams,
-    races: mockRaces,
-    registrations: mockRegistrations,
-    results: mockResults,
-    auditLogs: mockAuditLogs,
+    competitors: [],
+    teams: [],
+    races: [],
+    registrations: [],
+    results: [],
+    auditLogs: [],
   });
 
   const [live, setLive] = useState(false);
@@ -62,13 +62,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setLive(snapshot.reachable);
     setState((prev) => ({
       ...prev,
-      competitors: snapshot.competitors.length ? snapshot.competitors : prev.competitors,
-      teams: snapshot.teams.length ? snapshot.teams : prev.teams,
-      races: snapshot.races.length ? snapshot.races : prev.races,
-      registrations: snapshot.registrations.length ? snapshot.registrations : prev.registrations,
-      results: snapshot.results.length ? snapshot.results : prev.results,
+      competitors: snapshot.competitors,
+      teams: snapshot.teams,
+      races: snapshot.races,
+      registrations: snapshot.registrations,
+      results: snapshot.results,
     }));
   }, []);
+
 
   useEffect(() => {
     let cancelled = false;
