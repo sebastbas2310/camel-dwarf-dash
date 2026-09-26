@@ -1,16 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import {
-  mockAuditLogs,
-  mockCompetitors,
-  mockRaces,
-  mockRegistrations,
-  mockResults,
-  mockTeams,
-} from "./mock-data";
 import { useAuth } from "./auth";
 import { api } from "./api";
 import { fetchRemoteSnapshot } from "./remote";
+
 import type {
   AuditLog,
   Competitor,
