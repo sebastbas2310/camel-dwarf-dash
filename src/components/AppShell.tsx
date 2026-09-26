@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
-  ClipboardCheck,
+  UserCog,
   Flag,
   LayoutDashboard,
   LogOut,
@@ -46,7 +46,7 @@ export function AppShell({
   subtitle?: string | undefined;
   actions?: ReactNode | undefined;
 }) {
-  const { user, ready, logout, offline } = useAuth();
+  const { user, ready, logout } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
